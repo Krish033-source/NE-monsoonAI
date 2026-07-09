@@ -114,6 +114,12 @@ def load_env():
                 if line and not line.startswith("#") and "=" in line:
                     k, v = line.split("=", 1)
                     data[k.strip()] = v.strip()
+   
+    try:
+        for k, v in st.secrets.items():
+            data[k] = v
+    except Exception:
+        pass 
     return data
 
 
