@@ -2,6 +2,8 @@
 
 An ML-powered early-warning dashboard for water-borne disease risk across North-East India — case + death history, a red/yellow/green risk map, live weather, live news, a hospital locator, email alerts, and an optional AI helper bot.
 
+**Live Link:** https://ne-monsoonai-app.streamlit.app/  
+
 ## 📦 Files you need (all included)
 
 ```
