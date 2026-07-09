@@ -895,7 +895,10 @@ elif page == " Hospital Locator":
                             st.error("No saved Gmail App Password yet — set one up on the Alerts & Notifications page first.")
                         else:
                             ok, msg = send_email(sender_gmail, app_pw_saved, h["Contact_Email"], subj, body_msg)
-                            st.success(msg) if ok else st.error(msg)
+                            if ok:
+                                st.success(msg)
+                            else:
+                                st.error(msg)  
                 st.markdown("---")
     else:
         st.info("Choose a state or search a place name above to see nearby hospitals.")
@@ -995,7 +998,10 @@ elif page == " Alerts & Notifications":
                 ]
                 body = "Water-Borne Disease Alert Summary\n\n" + "\n".join(summary_lines)
                 ok, msg = send_email(sender, app_pw, recipient, "Water-Borne Disease Alert Summary", body)
-                st.success(msg) if ok else st.error(msg)
+                if ok:
+                  st.success(msg)
+                else:
+                  st.error(msg)
               
 # ============================================================================
 # PAGE: DO'S & DON'TS
