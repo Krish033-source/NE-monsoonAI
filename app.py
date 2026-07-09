@@ -959,22 +959,29 @@ elif page == " Alerts & Notifications":
         st.success("🟢 All states currently within normal range. No active alerts.")
 
     st.markdown("---")
-    st.subheader(" Email Alert Subscription")
+    st.subheader("📧 Email Alert Subscription")
     st.caption("Sends a summary of current Red/Yellow zone states using your own Gmail account.")
+
     with st.form("email_alert_form"):
-        st.info("Uses Gmail SMTP. You'll need a Gmail **App Password** (Google Account → Security → "
-                "App Passwords) — not your regular password. Saved locally so you don't need to re-enter it.")
+        st.info("Uses Gmail SMTP. App Password is read directly from your `.env` file "
+                "(`ALERT_SENDER_APP_PASSWORD`) — no need to enter it here.")
+
         sender = st.text_input("Your Gmail address", value=ENV.get("ALERT_SENDER_EMAIL", USER_EMAIL))
         recipient = st.text_input("Send alert to (email)", value=USER_EMAIL)
-        remember = st.checkbox("Remember these credentials locally for next time", value=True)
-        submitted = st.form_submit_button("Send Alert Now")
+
         app_pw = ENV.get("ALERT_SENDER_APP_PASSWORD", "")
+
+        submitted = st.form_submit_button("Send Alert Now")
+
         if submitted:
-            if not (sender and app_pw and recipient):
-                st.warning("Please fill in all three fields.")
+            if not app_pw:
+                st.error("ALERT_SENDER_APP_PASSWORD .env file me nahi mila. Pehle usme add karo.")
+            elif not (sender and recipient):
+                st.warning("Please fill in sender and recipient email.")
             else:
-                if remember:
-                    save_env({"ALERT_SENDER_EMAIL": sender, "ALERT_SENDER_APP_PASSWORD": app_pw})
+                if sender != ENV.get("ALERT_SENDER_EMAIL"):
+                    save_env({"ALERT_SENDER_EMAIL": sender})
+                  
                 summary_lines = [
                     f"{r.State}: {r.Zone} zone — {r.Driving_Disease} driving it ({r.Risk_Ratio}x normal)"
                     for _, r in risk_state_df.sort_values("Risk_Ratio", ascending=False).iterrows()
@@ -982,8 +989,7 @@ elif page == " Alerts & Notifications":
                 body = "Water-Borne Disease Alert Summary\n\n" + "\n".join(summary_lines)
                 ok, msg = send_email(sender, app_pw, recipient, "Water-Borne Disease Alert Summary", body)
                 st.success(msg) if ok else st.error(msg)
-
-
+              
 # ============================================================================
 # PAGE: DO'S & DON'TS
 # ============================================================================
