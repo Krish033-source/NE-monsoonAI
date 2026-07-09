@@ -5,11 +5,7 @@ An ML-powered early-warning dashboard for water-borne disease risk across
 North-East Indian states: historical case+death data, live weather, live
 news, a red/yellow/green risk map, a hospital locator, and an optional
 AI helper bot.
-
-Run with:  streamlit run app.py
-Data files required in ./data/  
 """
-
 import math
 import os
 import xml.etree.ElementTree as ET
@@ -49,7 +45,7 @@ PROFILE_FILE = f"{DATA_DIR}/NE_StateProfile.xlsx"
 HOSPITAL_FILE = f"{DATA_DIR}/NE_Hospitals.xlsx"
 
 ENV_FILE = ".env"
-GROQ_MODEL = "llama-3.1-8b-instant"  # check console.groq.com/docs/models if this is retired
+GROQ_MODEL = "llama-3.1-8b-instant" 
 
 RISK_COLORS = {"Green": "#2ecc71", "Yellow": "#f1c40f", "Red": "#e74c3c"}
 RISK_ORDER = ["Green", "Yellow", "Red"]
@@ -573,10 +569,10 @@ if red_count == 0 and yellow_count == 0:
     st.sidebar.success("🟢 All states nominal")
 
 page = st.sidebar.radio("Navigate", [
-    "🏠 Overview", "📈 Disease Prediction", "🗺️ Risk Zone Map",
-    "🌦️ Live Weather", "📰 Live News", "🏥 Hospital Locator",
-    "🤖 HelperBot (AI)", "🔔 Alerts & Notifications",
-    "✅ Do's & Don'ts", "📖 Documentation", "ℹ️ About",
+    " Overview", " Disease Prediction", " Risk Zone Map",
+    " Live Weather", " Live News", " Hospital Locator",
+    " HelperBot (AI)", " Alerts & Notifications",
+    " Do's & Don'ts", " Documentation", " About",
 ])
 st.sidebar.markdown("---")
 st.sidebar.markdown(
@@ -588,7 +584,7 @@ st.sidebar.markdown(
 # ============================================================================
 # PAGE: OVERVIEW
 # ============================================================================
-if page == "🏠 Overview":
+if page == " Overview":
     st.title("🦠 Water-Borne Disease Alert Dashboard")
     st.caption("North-East India · ML-powered early warning system · synthetic demo data")
 
@@ -633,14 +629,14 @@ if page == "🏠 Overview":
     )
     st.plotly_chart(fig3, use_container_width=True)
     n_spikes = int(merged["Outbreak_Spike"].sum()) if "Outbreak_Spike" in merged.columns else 0
-    st.caption(f"📌 {n_spikes} localized outbreak-spike events flagged across the full dataset "
+    st.caption(f" {n_spikes} localized outbreak-spike events flagged across the full dataset "
                f"(sudden jumps well above a state/disease's normal pattern).")
 
 
 # ============================================================================
 # PAGE: DISEASE PREDICTION
 # ============================================================================
-elif page == "📈 Disease Prediction":
+elif page == " Disease Prediction":
     st.title("📈 Disease Prediction")
     st.caption("12-month forward forecast using a stacked machine-learning model")
 
@@ -668,7 +664,7 @@ elif page == "📈 Disease Prediction":
     # advice box, tied to this disease/state's actual computed risk zone
     match = risk_detail_df[(risk_detail_df.State == selected_state) & (risk_detail_df.Disease == selected_disease)]
     zone_here = match.iloc[0]["Zone"] if not match.empty else "Green"
-    st.markdown(f'<div class="advice-box">🩺 <b>Advice:</b> {get_advice(selected_disease, zone_here)}</div>',
+    st.markdown(f'<div class="advice-box"> <b>Advice:</b> {get_advice(selected_disease, zone_here)}</div>',
                 unsafe_allow_html=True)
 
     st.markdown("---")
@@ -703,8 +699,8 @@ elif page == "📈 Disease Prediction":
 # ============================================================================
 # PAGE: RISK ZONE MAP
 # ============================================================================
-elif page == "🗺️ Risk Zone Map":
-    st.title("🗺️ Risk Zone Map")
+elif page == " Risk Zone Map":
+    st.title(" Risk Zone Map")
     st.caption("Each state's predicted next month vs. its own historical average for that same calendar month")
 
     legend_cols = st.columns(3)
@@ -750,8 +746,8 @@ elif page == "🗺️ Risk Zone Map":
 # ============================================================================
 # PAGE: LIVE WEATHER
 # ============================================================================
-elif page == "🌦️ Live Weather":
-    st.title("🌦️ Live Weather")
+elif page == " Live Weather":
+    st.title(" Live Weather")
     st.caption("Real-time conditions via the Open-Meteo API (free, no API key required)")
 
     selected_state_w = st.selectbox("Select State", states, key="weather_state")
@@ -812,8 +808,8 @@ elif page == "🌦️ Live Weather":
 # ============================================================================
 # PAGE: LIVE NEWS
 # ============================================================================
-elif page == "📰 Live News":
-    st.title("📰 Live Health News")
+elif page == " Live News":
+    st.title(" Live Health News")
     st.caption("Real-time headlines via Google News RSS (free, no API key required)")
 
     default_query = "waterborne disease outbreak India"
@@ -837,8 +833,8 @@ elif page == "📰 Live News":
 # ============================================================================
 # PAGE: HOSPITAL LOCATOR
 # ============================================================================
-elif page == "🏥 Hospital Locator":
-    st.title("🏥 Hospital Locator")
+elif page == " Hospital Locator":
+    st.title(" Hospital Locator")
     st.warning("⚠️ **Demo data notice:** hospital names, bed counts, staff numbers, and contact details below "
                "are all **synthetically generated placeholders** for this portfolio project — they are not "
                "real hospital records. Replace `data/NE_Hospitals.xlsx` with verified real hospital data "
@@ -876,13 +872,13 @@ elif page == "🏥 Hospital Locator":
                 cc2.metric("Beds available", f"{h['Available_Beds']}/{h['Total_Beds']}")
                 cc3.metric("Doctors on staff", h["Doctors_On_Staff"])
                 cc4.metric("Medicine stock", h["Medicine_Stock_Status"])
-                cc5.metric("ORS/IV fluids", "✅ Yes" if h["ORS_IV_Fluids_Available"] else "❌ No")
+                cc5.metric("ORS/IV fluids", " Yes" if h["ORS_IV_Fluids_Available"] else "❌ No")
                 st.caption(f"{h['Type']} facility · 📞 {h['Contact_Phone']} · ✉️ {h['Contact_Email']}")
 
                 mailto = f"mailto:{h['Contact_Email']}?subject=Inquiry%20from%20WBD%20Dashboard&body=Hello%2C%0D%0A%0D%0A"
                 mc1, mc2 = st.columns([1, 1])
                 mc1.link_button("✉️ Message via your email app", mailto)
-                with mc2.popover("📤 Send from dashboard instead"):
+                with mc2.popover(" Send from dashboard instead"):
                     st.caption("Uses your saved Gmail (Alerts page) to send directly.")
                     subj = st.text_input("Subject", value="Inquiry from WBD Dashboard", key=f"subj_{h['Hospital_ID']}")
                     body_msg = st.text_area("Message", key=f"body_{h['Hospital_ID']}")
@@ -902,8 +898,8 @@ elif page == "🏥 Hospital Locator":
 # ============================================================================
 # PAGE: HELPERBOT (GROQ AI)
 # ============================================================================
-elif page == "🤖 HelperBot (AI)":
-    st.title("🤖 HelperBot")
+elif page == " HelperBot (AI)":
+    st.title(" HelperBot")
     st.caption("Ask questions about water safety, hygiene, or how to read this dashboard — answered by an AI assistant.")
 
     groq_key = ENV.get("GROQ_API_KEY", "")
@@ -944,8 +940,8 @@ elif page == "🤖 HelperBot (AI)":
 # ============================================================================
 # PAGE: ALERTS & NOTIFICATIONS
 # ============================================================================
-elif page == "🔔 Alerts & Notifications":
-    st.title("🔔 Alerts & Notifications")
+elif page == " Alerts & Notifications":
+    st.title(" Alerts & Notifications")
 
     red_states = risk_state_df[risk_state_df.Zone == "Red"]
     yellow_states = risk_state_df[risk_state_df.Zone == "Yellow"]
@@ -963,7 +959,7 @@ elif page == "🔔 Alerts & Notifications":
         st.success("🟢 All states currently within normal range. No active alerts.")
 
     st.markdown("---")
-    st.subheader("📧 Email Alert Subscription")
+    st.subheader(" Email Alert Subscription")
     st.caption("Sends a summary of current Red/Yellow zone states using your own Gmail account.")
     with st.form("email_alert_form"):
         st.info("Uses Gmail SMTP. You'll need a Gmail **App Password** (Google Account → Security → "
@@ -972,6 +968,7 @@ elif page == "🔔 Alerts & Notifications":
         recipient = st.text_input("Send alert to (email)", value=USER_EMAIL)
         remember = st.checkbox("Remember these credentials locally for next time", value=True)
         submitted = st.form_submit_button("Send Alert Now")
+        app_pw = ENV.get("ALERT_SENDER_APP_PASSWORD", "")
         if submitted:
             if not (sender and app_pw and recipient):
                 st.warning("Please fill in all three fields.")
@@ -990,8 +987,8 @@ elif page == "🔔 Alerts & Notifications":
 # ============================================================================
 # PAGE: DO'S & DON'TS
 # ============================================================================
-elif page == "✅ Do's & Don'ts":
-    st.title("✅ Do's & Don'ts")
+elif page == " Do's & Don'ts":
+    st.title(" Do's & Don'ts")
     st.caption("Simple, practical steps for preventing water-borne disease — for anyone, no medical background needed.")
 
     c1, c2 = st.columns(2)
@@ -1029,8 +1026,8 @@ elif page == "✅ Do's & Don'ts":
 # ============================================================================
 # PAGE: DOCUMENTATION
 # ============================================================================
-elif page == "📖 Documentation":
-    st.title("📖 Documentation")
+elif page == " Documentation":
+    st.title(" Documentation")
     st.caption("How this dashboard works, in plain language.")
 
     st.markdown("""
@@ -1076,8 +1073,8 @@ the same month in past years)**. A ratio of 1.0 means "right on the usual patter
 # ============================================================================
 # PAGE: ABOUT
 # ============================================================================
-elif page == "ℹ️ About":
-    st.title("ℹ️ About This Project")
+elif page == " About":
+    st.title(" About This Project")
     st.markdown("""
 **Smart Water-Borne Disease Alert Dashboard** — a machine-learning-powered early-warning concept for 
 water-borne disease risk across North-East India, built as a demonstration project.
