@@ -972,36 +972,33 @@ elif page == " Alerts & Notifications":
     st.subheader("📧 Email Alert Subscription")
     st.caption("Sends a summary of current Red/Yellow zone states using your own Gmail account.")
 
-    with st.form("email_alert_form"):
-        st.info("Uses Gmail SMTP. App Password is read directly from your `.env` file "
-                "(`ALERT_SENDER_APP_PASSWORD`) — no need to enter it here.")
+    sender = ENV.get("ALERT_SENDER_EMAIL", "")
+    app_pw = ENV.get("ALERT_SENDER_APP_PASSWORD", "")
 
-        sender = st.text_input("Your Gmail address", value=ENV.get("ALERT_SENDER_EMAIL", USER_EMAIL))
-        recipient = st.text_input("Send alert to (email)", value=USER_EMAIL)
+    if not sender or not app_pw:
+        st.error("Sender email or app password not configured yet — add ALERT_SENDER_EMAIL and "
+                  "ALERT_SENDER_APP_PASSWORD in Streamlit Cloud Secrets first.")
+    else:
+        with st.form("email_alert_form"):
+            st.caption(f"Alerts will be sent from **{sender}**.")
+            recipient = st.text_input("Send alert to this email", value=USER_EMAIL)
 
-        submitted = st.form_submit_button("Send Alert Now")
+            submitted = st.form_submit_button("Send Alert Now")
 
-        app_pw = ENV.get("ALERT_SENDER_APP_PASSWORD", "")
-      
-        if submitted:
-            if not app_pw:
-                st.error("ALERT_SENDER_APP_PASSWORD not found in .env file, add first.")
-            elif not (sender and recipient):
-                st.warning("Please fill in sender and recipient email.")
-            else:
-                if sender != ENV.get("ALERT_SENDER_EMAIL"):
-                    save_env({"ALERT_SENDER_EMAIL": sender})
-                  
-                summary_lines = [
-                    f"{r.State}: {r.Zone} zone — {r.Driving_Disease} driving it ({r.Risk_Ratio}x normal)"
-                    for _, r in risk_state_df.sort_values("Risk_Ratio", ascending=False).iterrows()
-                ]
-                body = "Water-Borne Disease Alert Summary\n\n" + "\n".join(summary_lines)
-                ok, msg = send_email(sender, app_pw, recipient, "Water-Borne Disease Alert Summary", body)
-                if ok:
-                  st.success(msg)
+            if submitted:
+                if not recipient:
+                    st.warning("Please enter a recipient email.")
                 else:
-                  st.error(msg)
+                    summary_lines = [
+                        f"{r.State}: {r.Zone} zone — {r.Driving_Disease} driving it ({r.Risk_Ratio}x normal)"
+                        for _, r in risk_state_df.sort_values("Risk_Ratio", ascending=False).iterrows()
+                    ]
+                    body = "Water-Borne Disease Alert Summary\n\n" + "\n".join(summary_lines)
+                    ok, msg = send_email(sender, app_pw, recipient, "Water-Borne Disease Alert Summary", body)
+                    if ok:
+                        st.success(msg)
+                    else:
+                        st.error(msg)
               
 # ============================================================================
 # PAGE: DO'S & DON'TS
