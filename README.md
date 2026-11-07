@@ -20,7 +20,7 @@ A stacked ML ensemble forecasts next-month cases for **5 diseases × 8 states**,
 
 <br>
 
-![NE-monsoonAI risk map](docs/demo.png)
+![NE-monsoonAI risk map](dashboard.png)
 
 </div>
 
@@ -209,7 +209,7 @@ health_dashboard/
     ├── NE_WaterBorne_2025_Synthetic.xlsx   ← Cases + Deaths + Outbreak_Spike columns
     ├── NE_RainfallHumidity.xlsx
     ├── NE_StateProfile.xlsx
-    └── NE_Hospitals.xlsx                   ← ⚠️ synthetic placeholder data, see below
+    └── NE_Hospitals.xlsx                
 ```
 
 ## Running it
